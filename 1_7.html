@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>ПОДБЕРИТЕ ОСНОВАНИЕ ДЛЯ КАЖДОЙ СИТУАЦИИ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-silk: #ffffff;
+            --blue-accent: #2f92bc;
+            --blue-gradient: linear-gradient(135deg, #378bd4, #3756d4);
+            --blue-border: #3778d4;
+            --text-dark: #2c2c2c;
+            --success: #2e7d32;
+            --success-bg: #e8f5e9;
+            --error: #d32f2f;
+            --error-bg: #ffebee;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-silk);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #matching-wide {
+            background: #ffffff;
+            border: 1px solid var(--blue-border);
+            border-radius: 12px;
+            padding: 16px 20px 12px 20px;
+            width: 1000px;
+            max-width: 95vw;
+            height: auto;
+            box-shadow: 0 40px 90px rgba(47, 146, 188, 0.12);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(47, 146, 188, 0.15);
+            padding-bottom: 8px;
+            flex-shrink: 0;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--blue-accent);
+            font-size: 22px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .description {
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Основная область - уменьшен отступ сверху и снизу */
+        .matching-area {
+            display: grid;
+            grid-template-columns: 1fr 60px 1fr;
+            gap: 6px;
+            position: relative;
+            margin-top: 6px;
+            margin-bottom: 4px;
+            flex: 1;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: flex-start;
+            z-index: 10;
+        }
+
+        /* Увеличенный размер карточек и шрифта */
+        .item {
+            background: #fff;
+            border: none;
+            box-shadow: 0 0 0 1px #e0e0e0;
+            border-radius: 12px;
+            padding: 14px 16px;
+            min-height: 110px;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.4;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: left;
+            word-break: break-word;
+            background: #fefefe;
+        }
+
+        /* Левая колонка - карточка с картинкой слева от текста */
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .item-left img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 10px;
+            flex-shrink: 0;
+            background: #f5f7fa;
+            padding: 4px;
+        }
+
+        .item-left .text {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.45;
+            text-align: left;
+            flex: 1;
+        }
+
+        .item-left .text strong {
+            font-weight: 700;
+            color: #1976d2;
+        }
+
+        /* Правая колонка - текст по центру, более крупный */
+        .item-right {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+        }
+
+        .item-right .text {
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .item:hover {
+            box-shadow: 0 0 0 2px var(--blue-accent);
+            background: #f0f8ff;
+            transform: translateY(-2px);
+        }
+
+        .item.active {
+            box-shadow: 0 0 0 3px var(--blue-accent);
+            background: var(--blue-accent);
+            color: white;
+        }
+
+        .item.active .text {
+            color: white;
+        }
+
+        .item.active .text strong {
+            color: white;
+        }
+
+        .item.correct {
+            box-shadow: 0 0 0 2px var(--success) !important;
+            background: var(--success-bg) !important;
+            color: var(--success) !important;
+        }
+
+        .item.correct .text {
+            color: var(--success) !important;
+        }
+
+        .item.correct .text strong {
+            color: var(--success) !important;
+        }
+
+        .item.wrong {
+            box-shadow: 0 0 0 2px var(--error) !important;
+            background: var(--error-bg) !important;
+            color: var(--error) !important;
+        }
+
+        .item.wrong .text {
+            color: var(--error) !important;
+        }
+
+        .item.wrong .text strong {
+            color: var(--error) !important;
+        }
+
+        .anchor {
+            width: 10px;
+            height: 10px;
+            background: var(--blue-accent);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 2px solid white;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+        }
+
+        .anchor-right {
+            right: -16px;
+        }
+
+        .anchor-left {
+            left: -16px;
+        }
+
+        #svg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .path-line {
+            fill: none;
+            stroke: var(--blue-accent);
+            stroke-width: 3;
+            stroke-linecap: round;
+            pointer-events: auto;
+            cursor: pointer;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 0.5s ease-out forwards;
+        }
+
+        @keyframes drawLine {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .path-line:hover {
+            stroke: var(--error);
+            stroke-width: 5;
+        }
+
+        .path-correct {
+            stroke: var(--success) !important;
+            stroke-width: 4;
+        }
+
+        .path-wrong {
+            stroke: var(--error) !important;
+            stroke-width: 4;
+        }
+
+        /* Панель действий — минимизированы отступы */
+        .actions {
+            text-align: center;
+            margin-top: 8px;
+            padding: 6px 0 4px 0;
+            flex-shrink: 0;
+        }
+
+        .btn-check {
+            background: var(--blue-gradient);
+            color: white;
+            padding: 10px 44px;
+            border: none;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(47, 146, 188, 0.25);
+            transition: 0.2s;
+        }
+
+        .btn-check:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(47, 146, 188, 0.3);
+        }
+
+        #status-bar {
+            font-weight: 700;
+            margin-top: 8px;
+            font-size: 14px;
+            text-align: center;
+            min-height: 28px;
+            padding: 4px;
+        }
+
+        /* Адаптация под узкие экраны */
+        @media (max-width: 800px) {
+            #matching-wide {
+                padding: 12px 14px 10px 14px;
+            }
+            .item {
+                padding: 10px 12px;
+                min-height: 90px;
+            }
+            .item-left img {
+                width: 45px;
+                height: 45px;
+            }
+            .item-left .text {
+                font-size: 12px;
+            }
+            .item-right .text {
+                font-size: 12px;
+            }
+            .anchor-right {
+                right: -12px;
+            }
+            .anchor-left {
+                left: -12px;
+            }
+            h2 {
+                font-size: 18px;
+            }
+            .btn-check {
+                padding: 8px 32px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .matching-area {
+                grid-template-columns: 1fr 40px 1fr;
+                gap: 4px;
+            }
+            .item-left {
+                gap: 10px;
+            }
+            .item-left img {
+                width: 38px;
+                height: 38px;
+            }
+            .item-left .text {
+                font-size: 11px;
+            }
+            .item-right .text {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body onresize="drawLines()">
+
+<div id="matching-wide">
+    <header>
+        <h2>Тренажер: Причины повторной идентификации ОПО</h2>
+        <div class="description">Соедините ситуацию (слева) с соответствующей причиной (справа)</div>
+    </header>
+
+    <div class="matching-area" id="area">
+        <svg id="svg-layer"></svg>
+        <div class="column" id="left-col"></div>
+        <div></div>
+        <div class="column" id="right-col"></div>
+    </div>
+
+    <div class="actions">
+        <button class="btn-check" onclick="validate()">Проверить</button>
+        <div id="status-bar"></div>
+    </div>
+</div>
+
+<script>
+    // Данные: ситуации слева (в фиксированном порядке)
+    const dataset = [
+        { 
+            id: 1, 
+            l: "<strong>Ситуация 1.</strong> Кран продали, а изменения в Реестр ОПО внести забыли",
+            lImage: "1.png",
+            r: "Фактическое состояние ОПО не соответствует данным в реестре" 
+        },
+        { 
+            id: 2, 
+            l: "<strong>Ситуация 2.</strong> Во время первичной идентификации не учли, что гидразингидрат — высокотоксичное вещество",
+            lImage: "2.png",
+            r: "Первичная идентификация проведена неверно" 
+        },
+        { 
+            id: 3, 
+            l: "<strong>Ситуация 3.</strong> Нефтебазу продали новой компании, нужно зарегистрировать изменения",
+            lImage: "3.png",
+            r: "Смена собственника" 
+        },
+        { 
+            id: 4, 
+            l: "<strong>Ситуация 4.</strong> Вышки до 6 метров больше не считаются ОПО, нужно исключить из реестра",
+            lImage: "4.png",
+            r: "Изменились критерии идентификации ОПО" 
+        }
+    ];
+
+    let selected = null;
+    let connections = [];
+
+    // Функция для обработки ошибок изображений
+    function handleImageError(img, id) {
+        img.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23e3f2fd'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%231976d2' font-size='20' font-weight='bold'%3E${id}%3C/text%3E%3C/svg%3E`;
+    }
+
+    // Перемешивание массива
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function init() {
+        const lCol = document.getElementById('left-col');
+        const rCol = document.getElementById('right-col');
+        
+        // Левая колонка: ситуации в фиксированном порядке (по возрастанию id)
+        const sL = [...dataset].sort((a, b) => a.id - b.id);
+        
+        // Правая колонка: причины в случайном порядке
+        const sR = shuffleArray([...dataset]);
+
+        lCol.innerHTML = '';
+        rCol.innerHTML = '';
+
+        sL.forEach(d => {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = `
+                <div class="item-left">
+                    <img src="${d.lImage}" alt="Ситуация ${d.id}" onerror="handleImageError(this, ${d.id})">
+                    <div class="text">${d.l}</div>
+                </div>
+                <div class="anchor anchor-right"></div>
+            `;
+            div.dataset.id = d.id;
+            div.dataset.side = 'l';
+            div.onclick = () => handleSelect(div);
+            lCol.appendChild(div);
+        });
+
+        sR.forEach(d => {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = `
+                <div class="item-right">
+                    <div class="text">${d.r}</div>
+                </div>
+                <div class="anchor anchor-left"></div>
+            `;
+            div.dataset.id = d.id;
+            div.dataset.side = 'r';
+            div.onclick = () => handleSelect(div);
+            rCol.appendChild(div);
+        });
+
+        drawLines();
+    }
+
+    function handleSelect(el) {
+        document.getElementById('status-bar').innerHTML = "";
+        document.getElementById('status-bar').style.color = "";
+
+        const linkIndex = connections.findIndex(c => c.l === el || c.r === el);
+        if (linkIndex !== -1) {
+            removeConnection(connections[linkIndex]);
+            return;
+        }
+
+        if (!selected) {
+            selected = el;
+            el.classList.add('active');
+        } else if (selected.dataset.side === el.dataset.side) {
+            selected.classList.remove('active');
+            selected = el;
+            el.classList.add('active');
+        } else {
+            const link = {
+                l: selected.dataset.side === 'l' ? selected : el,
+                r: selected.dataset.side === 'r' ? selected : el,
+                idL: selected.dataset.side === 'l' ? selected.dataset.id : el.dataset.id,
+                idR: selected.dataset.side === 'r' ? selected.dataset.id : el.dataset.id,
+                validated: false
+            };
+            connections.push(link);
+            selected.classList.remove('active');
+            selected = null;
+            drawLines();
+        }
+    }
+
+    function removeConnection(conn) {
+        conn.l.classList.remove('active', 'correct', 'wrong');
+        conn.r.classList.remove('active', 'correct', 'wrong');
+        const index = connections.indexOf(conn);
+        if (index !== -1) connections.splice(index, 1);
+        document.getElementById('status-bar').innerHTML = '';
+        drawLines();
+    }
+
+    function drawLines() {
+        const svg = document.getElementById('svg-layer');
+        svg.innerHTML = '';
+        const areaRect = document.getElementById('area').getBoundingClientRect();
+        if (areaRect.width === 0) return;
+
+        connections.forEach(conn => {
+            const lDot = conn.l.querySelector('.anchor-right');
+            const rDot = conn.r.querySelector('.anchor-left');
+            if (!lDot || !rDot) return;
+            
+            const lRect = lDot.getBoundingClientRect();
+            const rRect = rDot.getBoundingClientRect();
+
+            const x1 = lRect.left - areaRect.left + (lRect.width / 2);
+            const y1 = lRect.top - areaRect.top + (lRect.height / 2);
+            const x2 = rRect.left - areaRect.left + (rRect.width / 2);
+            const y2 = rRect.top - areaRect.top + (rRect.height / 2);
+
+            const cp1x = x1 + (x2 - x1) / 2;
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            const d = `M ${x1} ${y1} C ${cp1x} ${y1}, ${cp1x} ${y2}, ${x2} ${y2}`;
+            path.setAttribute("d", d);
+            path.classList.add('path-line');
+            if (conn.validated) {
+                path.classList.add(conn.idL === conn.idR ? 'path-correct' : 'path-wrong');
+            }
+
+            path.addEventListener('click', (e) => {
+                e.stopPropagation();
+                removeConnection(conn);
+            });
+
+            svg.appendChild(path);
+        });
+    }
+
+    function validate() {
+        if (connections.length === 0) {
+            const status = document.getElementById('status-bar');
+            status.innerHTML = '⚠️ Соедините элементы';
+            status.style.color = 'var(--error)';
+            return;
+        }
+
+        if (connections.length !== dataset.length) {
+            const status = document.getElementById('status-bar');
+            status.innerHTML = `⚠️ Соединено ${connections.length} из ${dataset.length}. Соедините все пары.`;
+            status.style.color = 'var(--error)';
+            return;
+        }
+
+        let errors = 0;
+        connections.forEach(conn => {
+            conn.validated = true;
+            const isOk = conn.idL === conn.idR;
+            conn.l.classList.remove('correct', 'wrong');
+            conn.r.classList.remove('correct', 'wrong');
+            conn.l.classList.add(isOk ? 'correct' : 'wrong');
+            conn.r.classList.add(isOk ? 'correct' : 'wrong');
+            if (!isOk) errors++;
+        });
+
+        drawLines();
+
+        const status = document.getElementById('status-bar');
+        if (errors === 0) {
+            status.innerHTML = "✅ Отлично! Все ситуации правильно сопоставлены с причинами!";
+            status.style.color = "var(--success)";
+        } else {
+            status.innerHTML = `⚠️ Ошибок: ${errors}. Нажмите на красную линию, чтобы удалить и исправить.`;
+            status.style.color = "var(--error)";
+        }
+    }
+
+    // Следим за изменением размера окна для перерисовки линий
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            drawLines();
+        }, 150);
+    });
+    
+    // Также перерисовываем после загрузки всех изображений
+    window.addEventListener('load', function() {
+        setTimeout(drawLines, 100);
+    });
+
+    // Глобальная функция для обработки ошибок изображений
+    window.handleImageError = handleImageError;
+    
+    init();
+</script>
+
+</body>
+</html>
